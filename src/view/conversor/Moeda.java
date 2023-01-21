@@ -22,6 +22,7 @@ import javax.swing.JSpinner;
 import javax.swing.AbstractListModel;
 import java.awt.Choice;
 import java.awt.Toolkit;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -66,9 +67,9 @@ public class Moeda {
 		frmConversorDeMoeda.getContentPane().setLayout(null);
 		
 		Map<String, Object> moedas = ConversorMoeda.retornaListaMoedas();
-		String[] chavesMoedas = ConversorMoeda.retornaListaChavesMoedas(moedas);	
-		Object[] valoresMoedas = ConversorMoeda.retornaListaValoresMoedas(moedas);
-		System.out.println(valoresMoedas);
+		System.out.println(moedas);
+		String[] chavesMoedas = ConversorMoeda.retornaListaChavesMoedas(moedas);
+		double[] valoresMoedas = ConversorMoeda.retornaListaValoresMoedas(moedas);
 //	    Currency currency = Currency.getInstance(moedaBase);
 //	    String simboloMoedaBase = currency.getSymbol();
 //		Double valorMoedaConversao = Double.parseDouble(moedas.get((Object) moedaConversao).toString()),
@@ -80,7 +81,7 @@ public class Moeda {
 		String currencyCode = currency.getCurrencyCode();
 		int indexDefaultCurrency = ConversorMoeda.buscaIndexSigla(chavesMoedas, currencyCode); // atribuinfo a moeda local como padrão.
 		comboBoxMoedaBase.setSelectedIndex(indexDefaultCurrency);
-		comboBoxMoedaBase.setBounds(10, 63, 202, 37);
+		comboBoxMoedaBase.setBounds(10, 111, 202, 37);
 		frmConversorDeMoeda.getContentPane().add(comboBoxMoedaBase);
 		
 		JButton btnMenu = new JButton("Menu");
@@ -88,7 +89,7 @@ public class Moeda {
 		frmConversorDeMoeda.getContentPane().add(btnMenu);
 		
 		textFieldMoedaBase = new JTextField();
-		textFieldMoedaBase.setBounds(222, 63, 135, 37);
+		textFieldMoedaBase.setBounds(222, 111, 135, 37);
 		frmConversorDeMoeda.getContentPane().add(textFieldMoedaBase);
 		textFieldMoedaBase.setColumns(10);
 		
@@ -96,13 +97,12 @@ public class Moeda {
 		comboBoxMoedaConversao.setModel(new DefaultComboBoxModel(chavesMoedas));
 		String moedaConversao = "USD"; // atribuindo USD como padrão.	
 		int indexDefaultConversionCurrency = ConversorMoeda.buscaIndexSigla(chavesMoedas, moedaConversao);
-		System.out.println(indexDefaultConversionCurrency);
 		comboBoxMoedaConversao.setSelectedIndex(indexDefaultConversionCurrency);
-		comboBoxMoedaConversao.setBounds(10, 111, 202, 37);
+		comboBoxMoedaConversao.setBounds(10, 63, 202, 37);
 		frmConversorDeMoeda.getContentPane().add(comboBoxMoedaConversao);
 		
 		textFieldMoedaConversao = new JTextField();
-		textFieldMoedaConversao.setBounds(222, 111, 135, 37);
+		textFieldMoedaConversao.setBounds(222, 63, 135, 37);
 		frmConversorDeMoeda.getContentPane().add(textFieldMoedaConversao);
 		textFieldMoedaConversao.setColumns(10);
 		
@@ -111,17 +111,17 @@ public class Moeda {
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaBase, comboBoxMoedaConversao, valoresMoedas);
+				ConversorMoeda.calculaConversaoMoedaBase(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, valoresMoedas);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaBase, comboBoxMoedaConversao, valoresMoedas);
+				ConversorMoeda.calculaConversaoMoedaBase(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, valoresMoedas);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaBase, comboBoxMoedaConversao, valoresMoedas);
+				ConversorMoeda.calculaConversaoMoedaBase(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, valoresMoedas);
 			}
 		});
 		
@@ -130,17 +130,17 @@ public class Moeda {
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaConversao, comboBoxMoedaBase, valoresMoedas);
+				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, valoresMoedas);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaConversao, comboBoxMoedaBase, valoresMoedas);
+				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, valoresMoedas);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaConversao, comboBoxMoedaBase, valoresMoedas);
+				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, valoresMoedas);
 			}
 			
 		});

@@ -3,15 +3,13 @@ package metodos;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Currency;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -84,8 +82,16 @@ public class ConversorMoeda {
 		return chavesMoedas;
 	}
 	
-	public static Object[] retornaListaValoresMoedas(Map<String, Object> moedas) {
-		return moedas.values().toArray(new Double[moedas.size()]);
+	public static double[] retornaListaValoresMoedas(Map<String, Object> moedas) {
+		double[] valores = new double[moedas.size()];
+		int i = 0;
+		for (Object value :  moedas.values()) {
+			BigDecimal  big = new BigDecimal(value+"");	        
+			valores[i] = big.doubleValue();
+			i++;
+		}
+				
+		return valores;
 	}
 	
 	/**
@@ -116,19 +122,35 @@ public class ConversorMoeda {
 		
 		boolean resultado = true;
 		for (int i = 0; i < valorASerAnalisado.length(); i++) {
-			if (!Character.isDigit(valorASerAnalisado.charAt(i)))
+			if (!Character.isDigit(valorASerAnalisado.charAt(i)) && !(valorASerAnalisado.charAt(i) == '.'))
 				resultado = false;
 		}
+		
 		return resultado;
 	}
 	
-	public static void calculaConversao(JTextField textField, JComboBox comboBoxConversao, Object[] valoresMoedas) {
-		String conteudoTextField = textField.getText();
+	public static void calculaConversaoMoedaBase(JTextField textFieldMontante, JTextField textFieldResultadoConversao, JComboBox comboBoxConversao, double[] valoresMoedas) {
+		String conteudoTextField = textFieldMontante.getText();
 		if (ConversorMoeda.contemSomentNumero(conteudoTextField)) {
-			double montante = Double.parseDouble(conteudoTextField), total = 0;
+			double montante = Double.valueOf(conteudoTextField), total = 0;
 			int indexMoeda = comboBoxConversao.getSelectedIndex();
-			total = montante / (double) valoresMoedas[indexMoeda];
-			textField.setText(String.format("%s %d.2f", "sla", valoresMoedas));
+			System.out.println(comboBoxConversao.getSelectedIndex());
+			total = montante * valoresMoedas[indexMoeda];
+			System.out.println(valoresMoedas[indexMoeda]);
+			textFieldResultadoConversao.setText(String.format("%.2f", total));
 		}
 	}
+	
+	public static void calculaConversao(JTextField textFieldMontante, JTextField textFieldResultadoConversao, JComboBox comboBoxConversao, double[] valoresMoedas) {
+		String conteudoTextField = textFieldMontante.getText();
+		if (ConversorMoeda.contemSomentNumero(conteudoTextField)) {
+			double montante = Double.valueOf(conteudoTextField), total = 0;
+			int indexMoeda = comboBoxConversao.getSelectedIndex();
+			System.out.println(comboBoxConversao.getSelectedIndex());
+			total = montante / valoresMoedas[indexMoeda];
+			System.out.println(String.format("%.2f / %.2f", montante, valoresMoedas[indexMoeda]));
+			textFieldResultadoConversao.setText(String.format("%.2f", total));
+		}
 	}
+	
+}
