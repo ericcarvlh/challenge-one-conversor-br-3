@@ -9,10 +9,11 @@ import view.conversor.Moeda;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 public class MenuPrincipal {
 
-	private JFrame frame;
+	private JFrame frmMenuPrincipal;
 
 	/**
 	 * Launch the application.
@@ -22,7 +23,7 @@ public class MenuPrincipal {
 			public void run() {
 				try {
 					MenuPrincipal window = new MenuPrincipal();
-					window.frame.setVisible(true);
+					window.frmMenuPrincipal.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -41,19 +42,11 @@ public class MenuPrincipal {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-		
-		JButton btnAbrirNovoMenu = new JButton("New button");
-		btnAbrirNovoMenu.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Moeda.main(null);
-				frame.setVisible(false);
-			}
-		});
-		btnAbrirNovoMenu.setBounds(39, 208, 89, 23);
-		frame.getContentPane().add(btnAbrirNovoMenu);
+		frmMenuPrincipal = new JFrame();
+		frmMenuPrincipal.setIconImage(Toolkit.getDefaultToolkit().getImage(MenuPrincipal.class.getResource("/view/menuPrincipal/menu_principal_icon.png")));
+		frmMenuPrincipal.setTitle("Menu Principal");
+		frmMenuPrincipal.setBounds(100, 100, 450, 300);
+		frmMenuPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmMenuPrincipal.getContentPane().setLayout(null);
 	}
 }

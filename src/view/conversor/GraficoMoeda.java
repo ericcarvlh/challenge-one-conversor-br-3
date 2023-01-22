@@ -3,14 +3,24 @@ package view.conversor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import metodos.ConversorMoeda;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class GraficoMoeda extends JFrame {
@@ -18,10 +28,11 @@ public class GraficoMoeda extends JFrame {
 
     public GraficoMoeda(String[] datas, double[] valores, String conteudoComboBoxBase, String conteudoComboBoxConversao) {
     	TimeSeriesCollection dataset = createDataset(datas, valores, conteudoComboBoxBase);
-        JFreeChart chart = createChart(dataset, conteudoComboBoxBase, conteudoComboBoxConversao);
-        ChartPanel chartPanel = new ChartPanel(chart);
+    	JFreeChart chart = createChart(dataset, conteudoComboBoxBase, conteudoComboBoxConversao);
+    	ChartPanel chartPanel = new ChartPanel(chart);
         
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/grafico_icon.png")));
         add(chartPanel);
         
         configuraGrafico(conteudoComboBoxBase);
@@ -69,7 +80,14 @@ public class GraficoMoeda extends JFrame {
             true,               // include legend
             true,
             false);
+    	
+    	// formatando o numero para que ele apareça com 5 digitos no grafico
+		XYPlot plot =  (XYPlot) chart.getPlot();
+		NumberAxis range = (NumberAxis) plot.getRangeAxis();
+		NumberFormat formatter = DecimalFormat.getInstance();
+		formatter.setMinimumFractionDigits(5);
+		range.setNumberFormatOverride(formatter);
+    	
         return chart;
     }
-
 }

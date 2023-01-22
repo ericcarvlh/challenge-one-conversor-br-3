@@ -16,15 +16,21 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.json.JSONObject;
 
+import view.conversor.DAOMoeda;
+import view.conversor.DTOMoeda;
+import view.conversor.GraficoMoeda;
+
 public class ConversorMoeda {
-	
 	public static JSONObject retornaRequisicaoJSON(URL urlParaChamada) throws IOException {
 		HttpURLConnection conexao = (HttpURLConnection) urlParaChamada.openConnection();
 
@@ -74,15 +80,10 @@ public class ConversorMoeda {
 	public static String[] retornaMoedas(String[] siglaMoedas) {
 		// gerando a sigla, simbolo e nome de cada moeda para auxiliar no entedimento do usuário.
 		for (int i = 0; i < siglaMoedas.length; i++) {
-			String siglaMoeda = siglaMoedas[i], nomeMoeda = "Desconhecido", simboloMoeda = "$";
-			try {
-				nomeMoeda = retornaNomeMoeda(siglaMoeda);
-				simboloMoeda = retornaSimboloMoeda(siglaMoeda);
-				siglaMoedas[i] = String.format("%s (%s) - %s", siglaMoeda, simboloMoeda, nomeMoeda);  
-			} catch (Exception e) {
-				System.out.println(String.format("Erro com a moeda %s: %s", siglaMoeda, e.getMessage()));
-				siglaMoedas[i] = String.format("%s (%s) - %s", siglaMoeda, simboloMoeda, nomeMoeda);  
-			}
+			String siglaMoeda = siglaMoedas[i],
+			nomeMoeda = retornaNomeMoeda(siglaMoeda),
+			simboloMoeda = retornaSimboloMoeda(siglaMoeda);
+			siglaMoedas[i] = String.format("%s (%s) - %s", siglaMoeda, simboloMoeda, nomeMoeda);  
 		}
 		
 		return siglaMoedas;
@@ -111,7 +112,7 @@ public class ConversorMoeda {
 				+ "&start="+dataRetrasada+""
 				+ "&end="+dataAtual+""
 				+ "&noauthfilter1=true";
-
+		
 		try {
 			URL urlParaChamada = new URL(url);
 	        
@@ -119,7 +120,9 @@ public class ConversorMoeda {
             
             return jsonObject.getJSONObject("data").toMap();
 		} catch (IOException e) {
-			System.out.println(String.format("Erro de fluxo: %s", e.getMessage()));
+			System.out.println(String.format("url para analise = %s\nErro de fluxo: %s", url, e.getMessage()));
+		} catch (JSONException e) {
+			System.out.println(String.format("url para analise = %s\\nErro de JSON: %s", url, e.getMessage()));
 		}
 		return null;
 	}
@@ -191,14 +194,24 @@ public class ConversorMoeda {
 		return moedaDesejada.substring(0, 3);
 	}
 	
-	public static String retornaNomeMoeda(String moedaDesejada) {
-		Currency moeda = Currency.getInstance(moedaDesejada);
-		return moeda.getDisplayName(Locale.getDefault());
+	public static String retornaNomeMoeda(String moedaDesejada) {		
+		try {
+			Currency moeda = Currency.getInstance(moedaDesejada);
+			return moeda.getDisplayName(Locale.getDefault());
+		} catch (Exception e) { // se entrar aqui foi informado somente a sigla e a sigla é null, entao retornamos ela 
+			System.out.println(String.format("Erro com a moeda %s: %s", moedaDesejada, e.getMessage()));
+			return moedaDesejada;
+		}
 	}
 	
 	public static String retornaSimboloMoeda(String moedaDesejada) {
-		Currency moeda = Currency.getInstance(moedaDesejada);
-		return moeda.getSymbol();
+		try {
+			Currency moeda = Currency.getInstance(moedaDesejada);
+			return moeda.getSymbol();
+		} catch (Exception e) { // se entrar aqui o valor da currency é null e então retornamos o simbolo "$"
+			System.out.println(String.format("Erro com a moeda %s: %s", moedaDesejada, e.getMessage()));
+			return "$";
+		}
 	}
 
 	public static double[] extraiValorMoedaMapObjeto(Map<String, Object> dadosMoeda) {
@@ -238,5 +251,68 @@ public class ConversorMoeda {
 			conteudoLabel = String.format("1 %s = %f %s", siglaMoedaBase, resultado, siglaMoedaConversao);
 		
 		labelMoeda.setText(conteudoLabel);
+	}
+
+	public static void alteraMoedaConversao(JComboBox comboBoxMoedaBase, JComboBox comboBoxMoedaConversao, DTOMoeda dtoMoeda, DAOMoeda daoMoeda, JLabel lblInfo, JLabel lblValorMoedaBase, JLabel lblValorMoedaConversao) {
+		String conteudoComboBox = (String) comboBoxMoedaBase.getSelectedItem();
+		String siglaMoedaBase = ConversorMoeda.retornaSiglaMoeda(conteudoComboBox);
+				
+		conteudoComboBox = (String) comboBoxMoedaConversao.getSelectedItem();
+		String siglaMoedaConversao = ConversorMoeda.retornaSiglaMoeda(conteudoComboBox);
+		
+		if (!siglaMoedaBase.equals(siglaMoedaConversao)) {
+			DAOMoeda.atribuiDadosMoeda(dtoMoeda, siglaMoedaBase);
+			
+			Map<String, Object> dadosMoeda = ConversorMoeda.retornaDadosHistoricoMoeda(siglaMoedaBase, siglaMoedaConversao);
+			String datas[] = ConversorMoeda.retornaChavesMap(dadosMoeda);
+							
+			double valoresPorData[] = ConversorMoeda.extraiValorMoedaMapObjeto(dadosMoeda);
+			
+			String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(siglaMoedaBase), 
+			nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(siglaMoedaConversao),
+			infoConversao = String.format("De %s para %s.", nomeMoedaBase, nomeMoedaConversao);
+			lblInfo.setText(infoConversao);	
+			
+			ConversorMoeda.atualizaLabelMoedas(lblValorMoedaBase, dtoMoeda.getValoresMoedas(), comboBoxMoedaBase, comboBoxMoedaConversao, 0);
+			ConversorMoeda.atualizaLabelMoedas(lblValorMoedaConversao, dtoMoeda.getValoresMoedas(), comboBoxMoedaBase, comboBoxMoedaConversao,  1);
+
+			new GraficoMoeda(datas, valoresPorData, siglaMoedaBase, siglaMoedaConversao);
+		} else { // a moeda base e a de conversao sao iguais, então voltamos ao form padrão dando avisos.
+			JOptionPane.showMessageDialog(null, "Ops...Não há gráfico de valorização para uma mesma moeda e também conversão.");
+			colocaConfigucaoPadraoConversor(daoMoeda, dtoMoeda, comboBoxMoedaConversao, comboBoxMoedaBase, lblInfo, lblValorMoedaBase, lblValorMoedaConversao);
+		}
+	}
+	
+	public static void colocaConfigucaoPadraoConversor(DAOMoeda daoMoeda, DTOMoeda dtoMoeda, JComboBox comboBoxMoedaConversao, JComboBox comboBoxMoedaBase, JLabel lblInfo, JLabel lblValorMoedaBase, JLabel lblValorMoedaConversao) {
+		Currency currency = Currency.getInstance(Locale.getDefault());
+		String siglaMoeda = currency.getCurrencyCode();
+		
+		DAOMoeda.atribuiDadosMoeda(dtoMoeda, siglaMoeda);
+		
+		comboBoxMoedaConversao.setModel(new DefaultComboBoxModel(dtoMoeda.getMoedas()));
+		String moedaConversao = "USD"; // atribuindo USD como padrão.	
+		int indexDefaultConversionCurrency = ConversorMoeda.buscaIndexSigla(dtoMoeda.getMoedas(), moedaConversao);
+		comboBoxMoedaConversao.setSelectedIndex(indexDefaultConversionCurrency);
+		
+		comboBoxMoedaBase.setModel(new DefaultComboBoxModel(dtoMoeda.getMoedas()));
+
+		int indexDefaultCurrency = ConversorMoeda.buscaIndexSigla(dtoMoeda.getMoedas(), siglaMoeda); // atribuinfo a moeda local como padrão.
+		comboBoxMoedaBase.setSelectedIndex(indexDefaultCurrency);
+		
+		Map<String, Object> dadosMoeda = ConversorMoeda.retornaDadosHistoricoMoeda(siglaMoeda, moedaConversao);
+		String datas[] = ConversorMoeda.retornaChavesMap(dadosMoeda);
+						
+		double valoresMoedaPorDia[] = ConversorMoeda.extraiValorMoedaMapObjeto(dadosMoeda);
+		
+		new GraficoMoeda(datas, valoresMoedaPorDia, siglaMoeda, moedaConversao);
+		
+		String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(siglaMoeda), 
+		nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(moedaConversao),
+		infoConversao = String.format("De %s para %s.", nomeMoedaBase, nomeMoedaConversao);
+		lblInfo.setText(infoConversao);
+		
+		ConversorMoeda.atualizaLabelMoedas(lblValorMoedaBase, dtoMoeda.getValoresMoedas(), comboBoxMoedaBase, comboBoxMoedaConversao, 0);
+		ConversorMoeda.atualizaLabelMoedas(lblValorMoedaConversao, dtoMoeda.getValoresMoedas(), comboBoxMoedaBase, comboBoxMoedaConversao,  1);
+
 	}
 }
