@@ -1,4 +1,4 @@
-package view.conversor;
+package view.conversor.moeda;
 
 import java.util.Map;
 

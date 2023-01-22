@@ -1,11 +1,11 @@
-package view.conversor;
+package view.conversor.moeda;
 
 import java.awt.EventQueue;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Map;
 import metodos.ConversorMoeda;
-import view.menuPrincipal.MenuPrincipal;
+import view.menuPrincipal.Menu;
 
 import javax.swing.JFrame;
 import javax.swing.JComboBox;
@@ -56,7 +56,7 @@ public class Moeda {
 	 */
 	private void initialize() {
 		frmConversorDeMoeda = new JFrame();
-		frmConversorDeMoeda.setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/money_icon.png")));
+		frmConversorDeMoeda.setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/moeda/money_icon.png")));
 		frmConversorDeMoeda.setTitle("Conversor de moeda");
 		frmConversorDeMoeda.setBounds(100, 100, 460, 390);
 		frmConversorDeMoeda.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -156,7 +156,7 @@ public class Moeda {
 		JButton btnMenu = new JButton("Menu");
 		btnMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MenuPrincipal().main(null);
+				new Menu().main(null);
 				frmConversorDeMoeda.dispose();
 			}
 		});

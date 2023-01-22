@@ -26,9 +26,9 @@ import javax.swing.JTextField;
 
 import org.json.JSONObject;
 
-import view.conversor.DAOMoeda;
-import view.conversor.DTOMoeda;
-import view.conversor.GraficoMoeda;
+import view.conversor.moeda.DAOMoeda;
+import view.conversor.moeda.DTOMoeda;
+import view.conversor.moeda.GraficoMoeda;
 
 public class ConversorMoeda {
 	public static JSONObject retornaRequisicaoJSON(URL urlParaChamada) throws IOException {
@@ -278,7 +278,7 @@ public class ConversorMoeda {
 
 			new GraficoMoeda(datas, valoresPorData, siglaMoedaBase, siglaMoedaConversao);
 		} else { // a moeda base e a de conversao sao iguais, então voltamos ao form padrão dando avisos.
-			JOptionPane.showMessageDialog(null, "Ops...Não há gráfico de valorização para uma mesma moeda e também conversão.");
+			JOptionPane.showMessageDialog(null, "Ops...Não há gráfico de valorização para uma mesma moeda e também conversão.", "Conversão inválida", JOptionPane.ERROR_MESSAGE);
 			colocaConfigucaoPadraoConversor(daoMoeda, dtoMoeda, comboBoxMoedaConversao, comboBoxMoedaBase, lblInfo, lblValorMoedaBase, lblValorMoedaConversao);
 		}
 	}

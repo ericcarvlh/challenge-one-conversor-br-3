@@ -1,4 +1,4 @@
-package view.conversor;
+package view.conversor.moeda;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -32,7 +32,7 @@ public class GraficoMoeda extends JFrame {
     	ChartPanel chartPanel = new ChartPanel(chart);
         
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/grafico_icon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/moeda/grafico_icon.png")));
         add(chartPanel);
         
         configuraGrafico(conteudoComboBoxBase);
