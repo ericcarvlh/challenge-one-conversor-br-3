@@ -24,20 +24,17 @@ public class GraficoMoeda extends JFrame {
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         add(chartPanel);
         
-        configuraGrafico(conteudoComboBoxBase, conteudoComboBoxConversao);
+        configuraGrafico(conteudoComboBoxBase);
         setLocationRelativeTo(null);
         
         setVisible(true);
     }
     
-    private void configuraGrafico(String conteudoComboBoxBase, String conteudoComboBoxConversao) {
+    private void configuraGrafico(String conteudoComboBoxBase) {
       setSize(600, 400);
-      String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase),
-    	nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxConversao);	  
+      String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase);	  
       
-      String titulo = String.format("Valorização do(a) %s em relação ao(a) %s.", 
-		nomeMoedaBase, 
-		nomeMoedaConversao);
+      String titulo = String.format("Valorização do(a) %s.", nomeMoedaBase);
       setTitle(titulo);
     }
 
@@ -57,13 +54,15 @@ public class GraficoMoeda extends JFrame {
     }
 
     private JFreeChart createChart(TimeSeriesCollection dataset, String conteudoComboBoxBase, String conteudoComboBoxConversao) {
-        String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase);
+        String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase),
+        		nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxConversao);
     	
-    	String descricao = String.format("Valorização do(a) %s nos últomos 30 dias.", 
-        		nomeMoedaBase);
+    	String subTitulo = String.format("Valorização do(a) %s em relação ao %s nos últimos 30 dias.", 
+        		nomeMoedaBase,
+        		nomeMoedaConversao);
               
     	JFreeChart chart = ChartFactory.createTimeSeriesChart(
-            descricao,  // chart title
+    		subTitulo,  // chart title
             "Data",             // x axis label
             "Valor",            // y axis label
             dataset,            // data

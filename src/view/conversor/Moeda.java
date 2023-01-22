@@ -62,6 +62,16 @@ public class Moeda extends JPanel {
 		frmConversorDeMoeda.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmConversorDeMoeda.getContentPane().setLayout(null);
 		
+		JLabel lblValorMoedaBase = new JLabel("1 USD = X BRL");
+		lblValorMoedaBase.setFont(new Font("Arial", Font.PLAIN, 11));
+		lblValorMoedaBase.setBounds(10, 159, 202, 27);
+		frmConversorDeMoeda.getContentPane().add(lblValorMoedaBase);
+		
+		JLabel lblValorMoedaConversao = new JLabel("1 BRL = X USD");
+		lblValorMoedaConversao.setFont(new Font("Arial", Font.PLAIN, 11));
+		lblValorMoedaConversao.setBounds(10, 195, 202, 27);
+		frmConversorDeMoeda.getContentPane().add(lblValorMoedaConversao);
+		
 		Currency currency = Currency.getInstance(Locale.getDefault());
 		String siglaMoeda = currency.getCurrencyCode();
 		
@@ -91,15 +101,29 @@ public class Moeda extends JPanel {
 		comboBoxMoedaConversao.setBounds(10, 111, 202, 37);
 		frmConversorDeMoeda.getContentPane().add(comboBoxMoedaConversao);
 		
+		Map<String, Object> dadosMoeda = ConversorMoeda.retornaDadosHistoricoMoeda(currencyCode, moedaConversao);
+		String datas[] = ConversorMoeda.retornaChavesMap(dadosMoeda);
+						
+		double valoresMoedaPorDia[] = ConversorMoeda.extraiValorMoedaMapObjeto(dadosMoeda);
+		
+		new GraficoMoeda(datas, valoresMoedaPorDia, currencyCode, moedaConversao);
+				
 		textFieldMoedaConversao = new JTextField();
 		textFieldMoedaConversao.setBounds(222, 111, 135, 37);
 		frmConversorDeMoeda.getContentPane().add(textFieldMoedaConversao);
 		textFieldMoedaConversao.setColumns(10);
 		
-		JLabel lblNewLabel = new JLabel("De () para ()");
+		String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(currencyCode), 
+		nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(moedaConversao),
+		infoConversao = String.format("De %s para %s.", nomeMoedaBase, nomeMoedaConversao);
+		
+		JLabel lblNewLabel = new JLabel(infoConversao);
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel.setBounds(10, 25, 202, 27);
+		lblNewLabel.setBounds(10, 25, 382, 27);
 		frmConversorDeMoeda.getContentPane().add(lblNewLabel);
+		
+		ConversorMoeda.atualizaLabelMoedas(lblValorMoedaBase, dtoMoeda.getValoresMoedas(), comboBoxMoedaBase, comboBoxMoedaConversao, 0);
+		ConversorMoeda.atualizaLabelMoedas(lblValorMoedaConversao, dtoMoeda.getValoresMoedas(), comboBoxMoedaBase, comboBoxMoedaConversao,  1);
 		
 		comboBoxMoedaBase.addActionListener(new ActionListener () {
 			@Override
@@ -107,65 +131,55 @@ public class Moeda extends JPanel {
 				String conteudoComboBoxBase = (String) comboBoxMoedaBase.getSelectedItem();
 				String siglaMoedaBase = ConversorMoeda.retornaSiglaMoeda(conteudoComboBoxBase);
 				
-				daoMoeda.atribuiDadosMoeda(dtoMoeda, siglaMoedaBase);
+				DAOMoeda.atribuiDadosMoeda(dtoMoeda, siglaMoedaBase);
 				
 				String conteudoComboBoxConversao = (String) comboBoxMoedaConversao.getSelectedItem();
 				String siglaMoedaConversao = ConversorMoeda.retornaSiglaMoeda(conteudoComboBoxConversao);
 				
 				Map<String, Object> dadosMoeda = ConversorMoeda.retornaDadosHistoricoMoeda(siglaMoedaBase, siglaMoedaConversao);
 				String datas[] = ConversorMoeda.retornaChavesMap(dadosMoeda);
+								
+				double val[] = ConversorMoeda.extraiValorMoedaMapObjeto(dadosMoeda);
 				
-				double val[] = new double[datas.length];
-				
-				int index = 0;
-				for (Map.Entry<String, Object> entry : dadosMoeda.entrySet()) {
-				    String valor = entry.getValue().toString();
-				    valor = valor.replace("{", "");
-				    valor = valor.replace("}", "");
-				    String chave = valor.split("=")[1];
-				    val[index] = Double.parseDouble(chave);
-				    index++;
-				}
-				
-				GraficoMoeda grafico = new GraficoMoeda(datas, val, siglaMoedaBase, siglaMoedaConversao);
+				new GraficoMoeda(datas, val, siglaMoedaBase, siglaMoedaConversao);
 			}
 		});
 		
 		// se a caixa de texto da moeda base for alterada entao pegamos o falor e calculamos.
 		textFieldMoedaBase.getDocument().addDocumentListener(new DocumentListener() {
-			
+			int tipoConversao = 0;
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversaoMoedaBase(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(), dtoMoeda.getMoedas());
+				ConversorMoeda.calculaConversao(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(), dtoMoeda.getMoedas(), tipoConversao);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversaoMoedaBase(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(), dtoMoeda.getMoedas());
+				ConversorMoeda.calculaConversao(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(), dtoMoeda.getMoedas(), tipoConversao);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversaoMoedaBase(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas());
+				ConversorMoeda.calculaConversao(textFieldMoedaBase, textFieldMoedaConversao, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas(), tipoConversao);
 			}
 		});
 		
 		// se a caixa de texto da moeda de conversão for alterada entao pegamos o falor e calculamos.
 		textFieldMoedaConversao.getDocument().addDocumentListener(new DocumentListener() {
-
+			int tipoConversao = 1;
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas());
+				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas(), tipoConversao);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas());
+				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas(), tipoConversao);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas());
+				ConversorMoeda.calculaConversao(textFieldMoedaConversao, textFieldMoedaBase, comboBoxMoedaConversao, dtoMoeda.getValoresMoedas(),  dtoMoeda.getMoedas(), tipoConversao);
 			}
 			
 		});
@@ -175,6 +189,7 @@ public class Moeda extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
 		btnMenu.setBounds(10, 291, 89, 37);
 		frmConversorDeMoeda.getContentPane().add(btnMenu);
 	}

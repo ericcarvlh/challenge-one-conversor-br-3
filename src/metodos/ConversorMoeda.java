@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.json.JSONObject;
@@ -110,7 +111,7 @@ public class ConversorMoeda {
 				+ "&start="+dataRetrasada+""
 				+ "&end="+dataAtual+""
 				+ "&noauthfilter1=true";
-	    System.out.println(url);
+
 		try {
 			URL urlParaChamada = new URL(url);
 	        
@@ -171,22 +172,17 @@ public class ConversorMoeda {
 		return null;
 	}
 	
-	public static void calculaConversaoMoedaBase(JTextField textFieldMontante, JTextField textFieldResultadoConversao, JComboBox comboBoxConversao, double[] valoresMoedas, String[] chavesMoedas) {
+	public static void calculaConversao(JTextField textFieldMontante, JTextField textFieldResultadoConversao, JComboBox comboBoxConversao, double[] valoresMoedas, String[] chavesMoedas, int tipoConversao) {
 		String conteudoTextField = textFieldMontante.getText();
 		if (ConversorMoeda.contemSomentNumero(conteudoTextField)) {
 			double montante = Double.valueOf(conteudoTextField), total = 0;
 			int indexMoeda = comboBoxConversao.getSelectedIndex();
-			total = montante * valoresMoedas[indexMoeda];
-			textFieldResultadoConversao.setText(String.format("%.2f", total));
-		}
-	}
-	
-	public static void calculaConversao(JTextField textFieldMontante, JTextField textFieldResultadoConversao, JComboBox comboBoxConversao, double[] valoresMoedas, String[] chavesMoedas) {
-		String conteudoTextField = textFieldMontante.getText();
-		if (ConversorMoeda.contemSomentNumero(conteudoTextField)) {
-			double montante = Double.valueOf(conteudoTextField), total = 0;
-			int indexMoeda = comboBoxConversao.getSelectedIndex();
-			total = montante / valoresMoedas[indexMoeda];
+			
+			if (tipoConversao == 1)
+				total = montante / valoresMoedas[indexMoeda];
+			else 
+				total = montante * valoresMoedas[indexMoeda];
+			
 			textFieldResultadoConversao.setText(String.format("%.2f", total));
 		}
 	}
@@ -194,7 +190,6 @@ public class ConversorMoeda {
 	public static String retornaSiglaMoeda(String moedaDesejada) {
 		return moedaDesejada.substring(0, 3);
 	}
-	
 	
 	public static String retornaNomeMoeda(String moedaDesejada) {
 		Currency moeda = Currency.getInstance(moedaDesejada);
@@ -204,5 +199,44 @@ public class ConversorMoeda {
 	public static String retornaSimboloMoeda(String moedaDesejada) {
 		Currency moeda = Currency.getInstance(moedaDesejada);
 		return moeda.getSymbol();
+	}
+
+	public static double[] extraiValorMoedaMapObjeto(Map<String, Object> dadosMoeda) {
+		int index = 0;
+		
+		double[] valores = new double[dadosMoeda.size()];
+		
+		for (Map.Entry<String, Object> entry : dadosMoeda.entrySet()) {
+		    String valor = entry.getValue().toString();
+		    valor = valor.replace("{", "");
+		    valor = valor.replace("}", "");
+		    String chave = valor.split("=")[1];
+		    valores[index] = Double.parseDouble(chave);
+		    index++;
+		}
+		
+		return valores;
+	}
+
+	public static void atualizaLabelMoedas(JLabel labelMoeda, double[] valoresMoeda, JComboBox comboBoxMoedaBase, JComboBox comboBoxMoedaConversao, int tipoLabelConversao) {
+		int indexValorMoedaConversao = comboBoxMoedaConversao.getSelectedIndex();
+		
+		String conteudoComboBox = comboBoxMoedaBase.getSelectedItem().toString();
+		String siglaMoedaBase = retornaSiglaMoeda(conteudoComboBox);
+		
+		conteudoComboBox = comboBoxMoedaConversao.getSelectedItem().toString();
+		String siglaMoedaConversao = retornaSiglaMoeda(conteudoComboBox);
+		
+		double resultado = valoresMoeda[indexValorMoedaConversao];
+		if (tipoLabelConversao == 1)
+			resultado = 1 / resultado;
+		
+		String conteudoLabel;
+		if (tipoLabelConversao == 1)
+			conteudoLabel = String.format("1 %s = %f %s", siglaMoedaConversao, resultado, siglaMoedaBase);
+		else 
+			conteudoLabel = String.format("1 %s = %f %s", siglaMoedaBase, resultado, siglaMoedaConversao);
+		
+		labelMoeda.setText(conteudoLabel);
 	}
 }
