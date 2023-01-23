@@ -81,7 +81,7 @@ public class ConversorSistemaNumerico {
 		if (sistemaNumerico.equals("octal")) {
 			int octal = Integer.parseInt(conteudoEntrada, 8);
 			return Integer.toBinaryString(octal);
-		} else if (sistemaNumerico.equals("binario")) {
+		} else if (sistemaNumerico.equals("hexadecimal")) {
 			int hexaDecimal = Integer.parseInt(conteudoEntrada, 16);
 			return Integer.toBinaryString(hexaDecimal);
 		}

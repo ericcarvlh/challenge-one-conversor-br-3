@@ -27,7 +27,7 @@ public class GraficoMoeda extends JFrame {
     private static final long serialVersionUID = 1L;
 
     public GraficoMoeda(String[] datas, double[] valores, String conteudoComboBoxBase, String conteudoComboBoxConversao) {
-    	TimeSeriesCollection dataset = createDataset(datas, valores, conteudoComboBoxBase);
+    	TimeSeriesCollection dataset = createDataset(datas, valores, conteudoComboBoxConversao);
     	JFreeChart chart = createChart(dataset, conteudoComboBoxBase, conteudoComboBoxConversao);
     	ChartPanel chartPanel = new ChartPanel(chart);
         
@@ -35,7 +35,7 @@ public class GraficoMoeda extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/moeda/grafico_icon.png")));
         add(chartPanel);
         
-        configuraGrafico(conteudoComboBoxBase);
+        configuraGrafico(conteudoComboBoxConversao);
         setLocationRelativeTo(null);
         
         setVisible(true);
@@ -43,14 +43,14 @@ public class GraficoMoeda extends JFrame {
     
     private void configuraGrafico(String conteudoComboBoxBase) {
       setSize(650, 390);
-      String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase);	  
+      String nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase);	  
       
-      String titulo = String.format("Valorização do(a) %s.", nomeMoedaBase);
+      String titulo = String.format("Valorização do(a) %s.", nomeMoedaConversao);
       setTitle(titulo);
     }
 
-    private TimeSeriesCollection createDataset(String[] datas, double[] valores, String conteudoComboBoxBase) {
-        TimeSeries series = new TimeSeries(conteudoComboBoxBase);
+    private TimeSeriesCollection createDataset(String[] datas, double[] valores, String conteudoComboBoxConversao) {
+        TimeSeries series = new TimeSeries(conteudoComboBoxConversao);
         // Adiciona os dados de exemplo
         try {
         	for (int index = 0; index < valores.length; index++) {
@@ -69,8 +69,8 @@ public class GraficoMoeda extends JFrame {
         		nomeMoedaConversao = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxConversao);
     	
     	String subTitulo = String.format("Valorização do(a) %s em relação ao %s nos últimos 30 dias.", 
-        		nomeMoedaBase,
-        		nomeMoedaConversao);
+    			nomeMoedaConversao,
+    			nomeMoedaBase);
               
     	JFreeChart chart = ChartFactory.createTimeSeriesChart(
     		subTitulo,  // chart title
