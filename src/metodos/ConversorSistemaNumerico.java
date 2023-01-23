@@ -1,5 +1,8 @@
 package metodos;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -84,7 +87,7 @@ public class ConversorSistemaNumerico {
 			conteudoEntrada = conteudoEntrada.replace(" ","");
 						
 			String sistemaNumerico = validaEntrada(conteudoEntrada, tipoEntrada);
-						
+			
 			if (sistemaNumerico.equals("nenhum"))
 				popUpErro("Ops...o número informado é invalido.", "Entrada inválida");
 			else {

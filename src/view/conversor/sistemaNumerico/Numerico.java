@@ -57,6 +57,7 @@ public class Numerico {
 	 */
 	private void initialize() {
 		frmSistemaNumerico = new JFrame();
+		frmSistemaNumerico.setIconImage(Toolkit.getDefaultToolkit().getImage(Numerico.class.getResource("/view/conversor/sistemaNumerico/binary_icon.png")));
 		frmSistemaNumerico.setTitle("Conversor de sistema n\u00FAmerico");
 		frmSistemaNumerico.setBounds(100, 100, 415, 300);
 		frmSistemaNumerico.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

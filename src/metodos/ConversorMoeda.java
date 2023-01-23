@@ -83,7 +83,7 @@ public class ConversorMoeda {
 			String siglaMoeda = siglaMoedas[i],
 			nomeMoeda = retornaNomeMoeda(siglaMoeda),
 			simboloMoeda = retornaSimboloMoeda(siglaMoeda);
-			siglaMoedas[i] = String.format("%s (%s) - %s", siglaMoeda, simboloMoeda, nomeMoeda);  
+			siglaMoedas[i] = String.format("%s (%s) - %s", siglaMoeda, simboloMoeda, nomeMoeda); 
 		}
 		
 		return siglaMoedas;

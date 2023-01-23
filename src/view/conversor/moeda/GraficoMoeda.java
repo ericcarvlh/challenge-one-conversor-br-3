@@ -31,7 +31,7 @@ public class GraficoMoeda extends JFrame {
     	JFreeChart chart = createChart(dataset, conteudoComboBoxBase, conteudoComboBoxConversao);
     	ChartPanel chartPanel = new ChartPanel(chart);
         
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        chartPanel.setPreferredSize(new java.awt.Dimension(650, 390));
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Moeda.class.getResource("/view/conversor/moeda/grafico_icon.png")));
         add(chartPanel);
         
@@ -42,7 +42,7 @@ public class GraficoMoeda extends JFrame {
     }
     
     private void configuraGrafico(String conteudoComboBoxBase) {
-      setSize(600, 400);
+      setSize(650, 390);
       String nomeMoedaBase = ConversorMoeda.retornaNomeMoeda(conteudoComboBoxBase);	  
       
       String titulo = String.format("Valorização do(a) %s.", nomeMoedaBase);
