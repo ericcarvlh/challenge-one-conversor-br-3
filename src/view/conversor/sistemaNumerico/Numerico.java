@@ -62,16 +62,12 @@ public class Numerico {
 		frmSistemaNumerico.setBounds(100, 100, 415, 300);
 		frmSistemaNumerico.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmSistemaNumerico.getContentPane().setLayout(null);
-
-		String[] sistemasNumericos = {"Hexadecimal", "Decimal", "Octal", "Binario"};
 		
 		JComboBox comboBoxEntrada = new JComboBox();
-		comboBoxEntrada.setModel(new DefaultComboBoxModel(sistemasNumericos));
 		comboBoxEntrada.setBounds(37, 26, 106, 37);
 		frmSistemaNumerico.getContentPane().add(comboBoxEntrada);
 		
 		JComboBox comboBoxSaida = new JComboBox();
-		comboBoxSaida.setModel(new DefaultComboBoxModel(sistemasNumericos));
 		comboBoxSaida.setBounds(189, 26, 106, 37);
 		frmSistemaNumerico.getContentPane().add(comboBoxSaida);
 		
@@ -111,34 +107,55 @@ public class Numerico {
 		frmSistemaNumerico.getContentPane().add(lblSada);
 		
 		JButton btnSair = new JButton("Sair");
+		btnSair.setBounds(206, 220, 89, 37);
+		frmSistemaNumerico.getContentPane().add(btnSair);
+		
+		JButton btnMenu = new JButton("Menu");
+		btnMenu.setBounds(10, 220, 89, 37);
+		frmSistemaNumerico.getContentPane().add(btnMenu);
+		
+		JButton btnTraduzir = new JButton("Traduzir");
+		btnTraduzir.setBounds(109, 220, 89, 37);
+		frmSistemaNumerico.getContentPane().add(btnTraduzir);
+		
+		JButton btnCopiar = new JButton("Cop\u00EDar");
+		btnCopiar.setBounds(300, 220, 89, 37);
+		frmSistemaNumerico.getContentPane().add(btnCopiar);
+		
+		JButton btnLimpar = new JButton("Limpar");
+		btnLimpar.setBounds(300, 74, 89, 37);
+		frmSistemaNumerico.getContentPane().add(btnLimpar);
+		
+		// informando os sistemas numericos para a conversao para serem exibidos posteriormente.
+		String[] sistemasNumericos = {"Hexadecimal", "Decimal", "Octal", "Binario"};
+		
+		// setando e informando os sistemas numéricos.
+		comboBoxEntrada.setModel(new DefaultComboBoxModel(sistemasNumericos));
+		comboBoxSaida.setModel(new DefaultComboBoxModel(sistemasNumericos));
+		
+		// se o botão for clicado,  fecha o programa.
 		btnSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
 		});
-		btnSair.setBounds(206, 220, 89, 37);
-		frmSistemaNumerico.getContentPane().add(btnSair);
 		
-		JButton btnMenu = new JButton("Menu");
+		// se o botão for clicado, volta para o menu.
 		btnMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frmSistemaNumerico.dispose();
 				Menu.main(null);
 			}
 		});
-		btnMenu.setBounds(10, 220, 89, 37);
-		frmSistemaNumerico.getContentPane().add(btnMenu);
 		
-		JButton btnTraduzir = new JButton("Traduzir");
+		// se o botão for clicado, traduz o numero.
 		btnTraduzir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConversorSistemaNumerico.traduzConteudo(textFieldEntrada, textFieldSaida, comboBoxEntrada, comboBoxSaida);
 			}
 		});
-		btnTraduzir.setBounds(109, 220, 89, 37);
-		frmSistemaNumerico.getContentPane().add(btnTraduzir);
 		
-		JButton btnCopiar = new JButton("Cop\u00EDar");
+		// se o botão for clicado, copia o conteúdo da caixa de texto saida.
 		btnCopiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				StringSelection stringSelection = new StringSelection(textFieldSaida.getText());
@@ -146,19 +163,13 @@ public class Numerico {
 				clipboard.setContents(stringSelection, null);
 			}
 		});
-		btnCopiar.setBounds(300, 220, 89, 37);
-		frmSistemaNumerico.getContentPane().add(btnCopiar);
 		
-		JButton btnLimpar = new JButton("Limpar");
+		// se o botão for clicado, limpa as caixas de texto.
 		btnLimpar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textFieldEntrada.setText("");
 				textFieldSaida.setText("");
 			}
 		});
-		btnLimpar.setBounds(300, 74, 89, 37);
-		frmSistemaNumerico.getContentPane().add(btnLimpar);
-		
-		
 	}
 }
