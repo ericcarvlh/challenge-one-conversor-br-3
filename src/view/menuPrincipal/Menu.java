@@ -73,7 +73,6 @@ public class Menu {
 		lblBoasVindas.setBounds(10, 11, 273, 55);
 		frmMenuPrincipal.getContentPane().add(lblBoasVindas);
 		
-
 		textFieldDataAtual = new JTextField();
 		textFieldDataAtual.setHorizontalAlignment(SwingConstants.CENTER);
 		textFieldDataAtual.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -96,14 +95,18 @@ public class Menu {
 		frmMenuPrincipal.getContentPane().add(lblNewLabel);
 		
 		JComboBox comboBoxFuncionalidades = new JComboBox();
-		String[] funcionalidades = {"Conversor de moeda", 
-				"Conversor de sistema númerico"};
-		comboBoxFuncionalidades.setModel(new DefaultComboBoxModel(funcionalidades));
 		comboBoxFuncionalidades.setBounds(10, 125, 273, 36);
 		frmMenuPrincipal.getContentPane().add(comboBoxFuncionalidades);
 		
+		// adicionando as funcionalidades que o sistema contém para serem exibidas posteriormente.
+		String[] funcionalidades = {"Conversor de moeda", "Conversor de sistema númerico"};
+		
+		// colocando para exibir as funcionaldiades do sistema.
+		comboBoxFuncionalidades.setModel(new DefaultComboBoxModel(funcionalidades));
+		
 		MenuPrincipal.atualizaInterface(textFieldHoraAtual, lblBoasVindas, textFieldDataAtual);
 		
+		// quando clicar iremos abrir a tela dessa funcionalidade
 		comboBoxFuncionalidades.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent e) {

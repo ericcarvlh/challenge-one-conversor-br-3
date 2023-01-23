@@ -15,7 +15,16 @@ import view.conversor.moeda.Moeda;
 import view.conversor.sistemaNumerico.Numerico;
 
 public class MenuPrincipal {
-	public static void atualizaInterface(JTextField txtHoraAtual, JLabel lblBoasVindas, JTextField txtDataAtual) {
+	
+	/**
+	 * Atualiza a interface a cada 1 segundo setando e atualizando algumas informações.
+	 * @author Eric Carvalho
+	 * @param textFieldHoraAtual é o campo onde vai a hora atual.
+	 * @param lblBoasVindas é a label onde será colocado uma mensagem de boas vindas.
+	 * @param textFieldDataAtual é p campo onde vai a data atual.
+	 * */
+	 
+	public static void atualizaInterface(JTextField textFieldHoraAtual, JLabel lblBoasVindas, JTextField textFieldDataAtual) {
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
 	        public void run() {
@@ -27,7 +36,7 @@ public class MenuPrincipal {
 	        	
 	        	dateFormat.setTimeZone(timezone);
 	    		
-	        	txtHoraAtual.setText(dateFormat.format(now.getTime()));
+	        	textFieldHoraAtual.setText(dateFormat.format(now.getTime()));
 
 	        	
 	    		int hour = now.get(Calendar.HOUR_OF_DAY);
@@ -54,16 +63,22 @@ public class MenuPrincipal {
     			
 	        	dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	        	dateFormat.setTimeZone(timezone);
-	        	txtDataAtual.setText(dateFormat.format(now.getTime()));
+	        	textFieldDataAtual.setText(dateFormat.format(now.getTime()));
 	        }
 	    };
 		timer.schedule( task, 0L ,1000L);
 	}
 
+	/**
+	 * Identifica a funcionalidade e abre uma nova aba com essa funcionalidade e por fim fecha o menu.
+	 * @author Eric Carvalho
+	 * @param formulario é o formulario onde se encontra todo o nosso GUI.
+	 * @param indexFuncionalidade é a posição da funcionalidade que o usuário escolheu.
+	 * */
 	public static void acessaFuncionalidade(JFrame formulario, int indexFuncionalidade) {
 		if (indexFuncionalidade == 0)
 			Moeda.main(null);
-		else if (indexFuncionalidade == 1)
+		else
 			Numerico.main(null);
 		
 		formulario.dispose();
