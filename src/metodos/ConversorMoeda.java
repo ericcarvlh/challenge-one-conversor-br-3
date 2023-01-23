@@ -406,11 +406,11 @@ public class ConversorMoeda {
 			String moedaConversao = "USD"; // atribuindo USD como padrão.	
 			// pegando a posição do USD em relação ao array.
 			int indexDefaultConversionCurrency = ConversorMoeda.buscaIndexSigla(dtoMoeda.getMoedas(), moedaConversao);
+			// coloca as moedas no comboBoxMoedaConversao.
+			comboBoxMoedaConversao.setModel(new DefaultComboBoxModel(dtoMoeda.getMoedas()));
 			// atribuindo o USD no comboBoxMoedaConversao como moeda de conversão padrão.
 			comboBoxMoedaConversao.setSelectedIndex(indexDefaultConversionCurrency);
 			
-			// coloca as moedas no comboBoxMoedaConversao.
-			comboBoxMoedaConversao.setModel(new DefaultComboBoxModel(dtoMoeda.getMoedas()));
 			
 			// coloca as moedas no comboBoxMoedaBase.
 			comboBoxMoedaBase.setModel(new DefaultComboBoxModel(dtoMoeda.getMoedas()));
