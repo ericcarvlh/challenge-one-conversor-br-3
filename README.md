@@ -3,7 +3,7 @@
 ## Conversor de moeda e sistema númerico
 
 O Conversor de moeda e sistema númerico é um sistema que foi desenvolvido para o 5° Challenge do programa ONE (Oracle Next Education). O desafio repassado foi: Fazer um conversor de moeda.
-O sistema desenvolvido possui 2 funcionalidades principais: Conversor de moedas e Converter sistemas númericos.
+O sistema desenvolvido possui 2 funcionalidades principais: Conversor de moedas e sistemas númericos.
 
 ## Funcionalidades do Conversor de moedas
 
